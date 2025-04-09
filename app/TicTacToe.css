@@ -1,0 +1,98 @@
+/* TicTacToe.css */
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #fff;
+}
+
+.menu {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(200, 200, 200, 0.4);
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.menu button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.new-game {
+  background: #a8d5ba;
+  color: #235c3f;
+}
+.new-game:hover {
+  background: #8ec3a0;
+  color: #fff;
+  font-size: 18px;
+}
+
+.play-cpu {
+  background: #c94c4c;
+  color: #fff;
+}
+
+.about {
+  background: #c4a484;
+  color: #fff;
+}
+
+.quit-game {
+  background: #b22222;
+  color: #fff;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 150px);
+  grid-template-rows: repeat(3, 150px);
+  gap: 3px;
+  background: linear-gradient(225deg, #8EADCE 0%, #98B792 25%, #CCBD78 50%, #D09B7A 75%, #EEA5A5 100%);
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.cell {
+  width: 150px;
+  height: 150px;
+  background-color: white;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.cell:hover {
+  background-color: rgba(0, 0, 0, 0.005);
+}
+.status{
+  display: absolute;
+  font-size: 30px;
+  color: rgb(255, 255, 255);
+  background-color: #ff0000;
+}
+.new-game-popup {
+  display: flex;
+  position: fixed;
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+}
