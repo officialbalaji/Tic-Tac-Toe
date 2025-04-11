@@ -61,6 +61,7 @@ const TicTacToe = () => {
   return (
     <div className="game-container">
       <h1>Tic-Tac-Toe</h1>
+      <br/>
       <div className="menu">
         <NewGame onStartNewGame={handleStartNewGame} />
         <button

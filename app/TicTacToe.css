@@ -76,7 +76,10 @@
   padding: 4px;
   border-radius: 10px;
 }
-
+h1{
+  color: rgb(138, 141, 141);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
 
 .cell {
   width: 150px;
