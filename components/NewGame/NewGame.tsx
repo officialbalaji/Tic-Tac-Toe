@@ -35,9 +35,9 @@ const NewGame: React.FC<NewGameProps> = ({ onStartNewGame }) => {
             </button>
             <h3>Name of the Players</h3>
             <label>Player 1</label>
-            <input type="text" value={pl1} onChange={(e) => setPl1(e.target.value)} />
+            <input type="text" onChange={(e) => setPl1(e.target.value)} />
             <label>Player 2</label>
-            <input type="text" value={pl2} onChange={(e) => setPl2(e.target.value)} />
+            <input type="text" onChange={(e) => setPl2(e.target.value)} />
             <button className="pop-up-button" onClick={handleOKClick}>OK</button>
           </div>
         </div>

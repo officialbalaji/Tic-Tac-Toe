@@ -12,7 +12,7 @@ const TicTacToe = () => {
   const [isXTurn, setIsXTurn] = useState(true);
   const [winner, setWinner] = useState<string | null>(null);
 
-  const isGameActive = playerNames.player1 !== '' && playerNames.player2 !== '' && !showCpuGame;
+  const isGameActive = playerNames.player1 !== '' && playerNames.player2 !== '' || showCpuGame;
 
   const handleCellClick = (index: number) => {
     if (!isGameActive || board[index] || winner) return;
@@ -101,9 +101,7 @@ const TicTacToe = () => {
           <p>{winner === 'Draw' ? 'It’s a draw!' : `${winner} wins!`}</p>
         ) : (
           <p>
-            {isGameActive
-              ? `${isXTurn ? playerNames.player1 : playerNames.player2}'s Turn`
-              : 'Select a mode to start playing'}
+            {isGameActive ? showCpuGame?  '': `${isXTurn ? playerNames.player1 : playerNames.player2}'s Turn` : 'Select a mode to start playing'}
           </p>
         )}
       </div>

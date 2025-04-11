@@ -106,7 +106,9 @@ const PlayWithCpu = () => {
   };
 
   const winner = calculateWinner(board);
+  
   const status = winner
+  
     ? `Winner: ${winner}`
     : board.every(cell => cell !== null)
     ? "Draw!"
@@ -130,6 +132,7 @@ const PlayWithCpu = () => {
           {status}
         </div>
       </div>
+      
     );
     
 };
