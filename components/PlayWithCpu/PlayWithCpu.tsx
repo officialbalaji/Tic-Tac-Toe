@@ -1,33 +1,49 @@
-import React, { useState } from "react";
-import "./TicTacToe.css";
+import React, { useEffect, useState } from "react";
 
-const TicTacToe = () => {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(true);
-  const [vsCPU, setVsCPU] = useState(false);
+const PlayWithCpu = () => {
+  const [board, setBoard] = useState<(string | null)[]>(Array(9).fill(null));
+  const [isXNext, setIsXNext] = useState(false); // CPU always starts
+  const [gameKey, setGameKey] = useState(0); // to force re-render and retrigger useEffect
 
-  const handleClick = (index) => {
-    if (board[index] || calculateWinner(board)) return;
+  useEffect(() => {
+    if (!isXNext && !calculateWinner(board) && board.includes(null)) {
+      const timeout = setTimeout(() => cpuMove(board), 300);
+      return () => clearTimeout(timeout);
+    }
+  }, [isXNext, board, gameKey]);
+
+  const handleClick = (index: number) => {
+    if (board[index] || calculateWinner(board) || !isXNext) return;
     const newBoard = [...board];
-    newBoard[index] = isXNext ? "X" : "O";
+    newBoard[index] = "X";
     setBoard(newBoard);
-    setIsXNext(!isXNext);
+    setIsXNext(false);
+  };
 
-    if (vsCPU && !isXNext) {
-      setTimeout(() => cpuMove(newBoard), 500);
+  const cpuMove = (currentBoard: (string | null)[]) => {
+    if (calculateWinner(currentBoard)) return;
+
+    let newBoard = [...currentBoard];
+    let move = -1;
+
+    // Random first move if board is empty
+    if (newBoard.every(cell => cell === null)) {
+      const availableMoves = newBoard
+        .map((_, i) => i)
+        .filter(i => newBoard[i] === null);
+      move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    } else {
+      move = findBestMove(newBoard);
+    }
+
+    if (move !== -1) {
+      newBoard[move] = "O";
+      setBoard(newBoard);
+      setIsXNext(true);
     }
   };
 
-  const cpuMove = (currentBoard) => {
-    const availableMoves = currentBoard.reduce((acc, val, idx) => (val === null ? [...acc, idx] : acc), []);
-    if (availableMoves.length === 0) return;
-    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
-    currentBoard[randomMove] = "O";
-    setBoard([...currentBoard]);
-    setIsXNext(true);
-  };
-
-  const calculateWinner = (squares) => {
+  const calculateWinner = (squares: (string | null)[]) => {
     const lines = [
       [0, 1, 2], [3, 4, 5], [6, 7, 8],
       [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -41,27 +57,81 @@ const TicTacToe = () => {
     return null;
   };
 
-  const winner = calculateWinner(board);
-  const status = winner ? `Winner: ${winner}` : `Next player: ${isXNext ? "X" : "O"}`;
+  const findBestMove = (board: (string | null)[]) => {
+    let bestScore = -Infinity;
+    let move = -1;
 
-  return (
-    <div className="game-container">
-      <h1>Tic-Tac-Toe</h1>
-      <div className="status">{status}</div>
-      <div className="board">
-        {board.map((cell, idx) => (
-          <button key={idx} className="cell" onClick={() => handleClick(idx)}>
-            {cell}
-          </button>
-        ))}
+    for (let i = 0; i < board.length; i++) {
+      if (board[i] === null) {
+        board[i] = "O";
+        let score = minimax(board, 0, false);
+        board[i] = null;
+        if (score > bestScore) {
+          bestScore = score;
+          move = i;
+        }
+      }
+    }
+
+    return move;
+  };
+
+  const minimax = (board: (string | null)[], depth: number, isMaximizing: boolean): number => {
+    const winner = calculateWinner(board);
+    if (winner === "O") return 10 - depth;
+    if (winner === "X") return depth - 10;
+    if (board.every(cell => cell !== null)) return 0;
+
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = "O";
+          bestScore = Math.max(bestScore, minimax(board, depth + 1, false));
+          board[i] = null;
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < board.length; i++) {
+        if (board[i] === null) {
+          board[i] = "X";
+          bestScore = Math.min(bestScore, minimax(board, depth + 1, true));
+          board[i] = null;
+        }
+      }
+      return bestScore;
+    }
+  };
+
+  const winner = calculateWinner(board);
+  const status = winner
+    ? `Winner: ${winner}`
+    : board.every(cell => cell !== null)
+    ? "Draw!"
+    : `Next player: ${isXNext ? "X (You)" : "O (CPU)"}`;
+    return (
+      <div className="game">
+        
+        <div className="board">
+          {board.map((cell, idx) => (
+            <button
+              key={idx}
+              className="cell"
+              onClick={() => handleClick(idx)}
+              disabled={!!cell || !isXNext || !!winner}
+            >
+              {cell}
+            </button>
+          ))}
+        </div>
+        <div id="status" className="status">
+          {status}
+        </div>
       </div>
-      <div className="controls">
-        <button onClick={() => { setBoard(Array(9).fill(null)); setIsXNext(true); }}>New Game</button>
-        <button onClick={() => setVsCPU(!vsCPU)}>{vsCPU ? "Play with Friend" : "Play with CPU"}</button>
-        <button onClick={() => window.location.reload()}>Quit Game</button>
-      </div>
-    </div>
-  );
+    );
+    
 };
 
-export default TicTacToe;
+export default PlayWithCpu;

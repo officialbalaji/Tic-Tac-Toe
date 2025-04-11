@@ -1,49 +1,111 @@
 'use client';
 import React, { useState } from "react";
 import NewGame from "@/components/NewGame/NewGame";
+import PlayWithCpu from "@/components/PlayWithCpu/PlayWithCpu";
 import "./TicTacToe.css";
+import Link from "next/link";
 
 const TicTacToe = () => {
-  const [disabledCells, setDisabledCells] = useState<number[]>([]);
+  const [showCpuGame, setShowCpuGame] = useState(false);
+  const [playerNames, setPlayerNames] = useState<{ player1: string; player2: string }>({ player1: '', player2: '' });
+  const [board, setBoard] = useState(Array(9).fill(null));
+  const [isXTurn, setIsXTurn] = useState(true);
+  const [winner, setWinner] = useState<string | null>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    const cellId = Number((event.target as HTMLElement).getAttribute('data-id'));
-    if (cellId && !disabledCells.includes(cellId)) {
-      alert(`You clicked cell ${cellId}`);
-      setDisabledCells(prev => [...prev, cellId]);
+  const isGameActive = playerNames.player1 !== '' && playerNames.player2 !== '' && !showCpuGame;
+
+  const handleCellClick = (index: number) => {
+    if (!isGameActive || board[index] || winner) return;
+
+    const newBoard = [...board];
+    newBoard[index] = isXTurn ? 'X' : 'O';
+    setBoard(newBoard);
+
+    const win = checkWinner(newBoard);
+    if (win) {
+      setWinner(win === 'X' ? playerNames.player1 : playerNames.player2);
+    } else if (!newBoard.includes(null)) {
+      setWinner('Draw');
+    } else {
+      setIsXTurn(!isXTurn);
     }
+  };
+
+  const checkWinner = (b: string[]) => {
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6],
+    ];
+    for (let [a, b1, c] of lines) {
+      if (b[a] && b[a] === b[b1] && b[a] === b[c]) {
+        return b[a];
+      }
+    }
+    return null;
+  };
+
+  const handleStartNewGame = (p1: string, p2: string) => {
+    resetGame();
+    setPlayerNames({ player1: p1, player2: p2 });
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setIsXTurn(true);
+    setWinner(null);
+    setShowCpuGame(false);
+    setPlayerNames({ player1: '', player2: '' });
   };
 
   return (
     <div className="game-container">
+      <h1>Tic-Tac-Toe</h1>
       <div className="menu">
-        <NewGame />
-        <button className="play-cpu">PLAY WITH CPU</button>
-        <button className="about">ABOUT TIC TAC TOE</button>
-        <button className="quit-game">QUIT GAME</button>
+        <NewGame onStartNewGame={handleStartNewGame} />
+        <button
+          className="play-cpu"
+          onClick={() => {
+            resetGame();
+            setShowCpuGame(false);
+            setTimeout(() => setShowCpuGame(true), 500);
+          }}
+        >
+          PLAY WITH CPU
+        </button>
+        <Link href="https://en.wikipedia.org/wiki/Tic-tac-toe">
+          <button className="about">ABOUT TIC TAC TOE</button>
+        </Link>
+        <button className="quit-game" onClick={() => resetGame()}>QUIT GAME</button>
       </div>
-      <div className="board">
-        {[...Array(9)].map((_, i) => {
-          const id = i + 1;
-          const isDisabled = disabledCells.includes(id);
-          return (
+
+      {showCpuGame ? (
+        <PlayWithCpu />
+      ) : (
+        <div className="board">
+          {board.map((cell, i) => (
             <div
-              key={id}
-              data-id={id}
-              className={`cell ${isDisabled ? "disabled" : ""}`}
-              onClick={!isDisabled ? handleClick : undefined}
+              key={i}
+              className={`cell ${!isGameActive ? 'disabled' : ''}`}
+              onClick={() => handleCellClick(i)}
             >
-              {isDisabled ? "X" : ""}
+              {cell}
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
+
       <div className="status">
-        <p id="player-1"></p> 
-        <p id="player-2"></p>
+        {winner ? (
+          <p>{winner === 'Draw' ? 'It’s a draw!' : `${winner} wins!`}</p>
+        ) : (
+          <p>
+            {isGameActive
+              ? `${isXTurn ? playerNames.player1 : playerNames.player2}'s Turn`
+              : 'Select a mode to start playing'}
+          </p>
+        )}
       </div>
-
-
     </div>
   );
 };

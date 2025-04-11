@@ -2,25 +2,25 @@
 import React, { useState } from 'react';
 import './NewGame.css';
 
-const NewGame = () => {
+type NewGameProps = {
+  onStartNewGame: (player1: string, player2: string) => void;
+};
+
+const NewGame: React.FC<NewGameProps> = ({ onStartNewGame }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [pl1, setPl1] = useState('');
   const [pl2, setPl2] = useState('');
 
-  const handleNewGameClick = () => {
-    setShowPopup(true);
-  };
-  const handleNewGameClose = () => {
-    setShowPopup(false);
-  };
+  const handleNewGameClick = () => setShowPopup(true);
+  const handleNewGameClose = () => setShowPopup(false);
+
   const handleOKClick = () => {
-    const player1 = document.getElementById("player-1");
-    const player2 = document.getElementById("player-2");
-
-    if (player1) player1.innerHTML = pl1;
-    if (player2) player2.innerHTML = pl2;
-
-    setShowPopup(false);
+    if (pl1.trim() && pl2.trim()) {
+      onStartNewGame(pl1, pl2);
+      setShowPopup(false);
+    } else {
+      alert("Please enter names for both players.");
+    }
   };
 
   return (
@@ -28,10 +28,12 @@ const NewGame = () => {
       <button className="new-game" onClick={handleNewGameClick}>NEW GAME</button>
 
       {showPopup && (
-        <div className="popup-overlay"> 
+        <div className="popup-overlay">
           <div className="new-game-popup">
-          <button className="close-pop-up" onClick={handleNewGameClose}>X</button>
-            <label>Name of the Players</label>
+            <button className="close-pop-up" onClick={handleNewGameClose}>
+              <label className="close-pop-value">X</label>
+            </button>
+            <h3>Name of the Players</h3>
             <label>Player 1</label>
             <input type="text" value={pl1} onChange={(e) => setPl1(e.target.value)} />
             <label>Player 2</label>

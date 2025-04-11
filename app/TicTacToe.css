@@ -34,23 +34,36 @@
 }
 .new-game:hover {
   background: #8ec3a0;
-  color: #fff;
+  color: #ffffff;
   font-size: 18px;
 }
 
 .play-cpu {
   background: #c94c4c;
-  color: #fff;
+  color: #fedcdc;
 }
-
+.play-cpu:hover {
+  background: #f16969;
+  color: #ffffff;
+  font-size: 18px;
+}
 .about {
   background: #c4a484;
-  color: #fff;
+  color: #f3dfc7;
 }
-
+.about:hover {
+  background: #b38a6b;
+  color: #ffffff;
+  font-size: 18px;
+}
 .quit-game {
   background: #b22222;
-  color: #fff;
+  color: #feecec;
+}
+.quit-game:hover {
+  background: #ff2600;
+  color: #ffffff;
+  font-size: 18px;
 }
 
 .board {
@@ -59,14 +72,17 @@
   grid-template-rows: repeat(3, 150px);
   gap: 3px;
   background: linear-gradient(225deg, #8EADCE 0%, #98B792 25%, #CCBD78 50%, #D09B7A 75%, #EEA5A5 100%);
+
   padding: 4px;
   border-radius: 10px;
 }
+
 
 .cell {
   width: 150px;
   height: 150px;
   background-color: white;
+  color: rgb(210, 207, 207);
   border: 2px solid rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   display: flex;
@@ -79,6 +95,7 @@
 
 .cell:hover {
   background-color: rgba(0, 0, 0, 0.005);
+  color: #ffffff;;
 }
 .status{
   display: absolute;
@@ -95,4 +112,9 @@
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   padding: 20px;
+}
+.cell.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+  cursor: not-allowed;
 }
